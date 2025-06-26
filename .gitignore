@@ -192,3 +192,10 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+
+#Files that dont make sense in a final version
+
+planing.txt
+what i learned.txt
+test.py
