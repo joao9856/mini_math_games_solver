@@ -1,0 +1,8 @@
+widgets = [] #list that stores widget info
+original_images = {} #original image cache
+image_cache = {} #resized image cache
+u_scale = 1.0 #user adjustable scale 0.5-1.0 step 0.1
+last_resize_time = 0.0 #to limit amount of resizing operations
+current_scale = 1.0 #keeping track of current true_scale applied to window
+event_calls = 0
+multiplier = 100
