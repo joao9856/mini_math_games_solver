@@ -13,16 +13,5 @@ validate_int = window.register(lambda x: enforce_int(x, "Rec 5-15"))
 main_page_loader(window, validate_int)
 
 
-
-
-
-
-
-
-
-
-
-
-
 window.bind("<Configure>", lambda event: resizer(window))
 window.mainloop()
