@@ -1,7 +1,10 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-from variables import widgets, original_images, image_cache, u_scale, last_resize_time, event_calls, multiplier, current_scale
 import time
+
+
+
+from variables import widgets, original_images, image_cache, u_scale, last_resize_time, event_calls, multiplier, current_scale, radiobutton_options
 
 def scaling(width, height):
     return width / 800 if width / 800 <= height / 600 else height / 600
@@ -44,7 +47,7 @@ def get_scaled_radio_buttons(size):
     return selected_photo, unselected_photo
 
 
-def enforce_int(input, placeholder_text="Rec 5-25"):
+def enforce_int(input, placeholder_text="Rec 5-15"):
     if input == "" or input == placeholder_text:
         return True
     return input.isdigit() 
@@ -73,9 +76,7 @@ def resizer(window):
     global multiplier
     event_calls += 1
     if event_calls == multiplier:
-        print(event_calls)
         multiplier += 100
-    print(f"Resizer called - Window size: {window.winfo_width()}x{window.winfo_height()}")
     
 
     
@@ -100,12 +101,9 @@ def resizer(window):
         return
     
     current_time = time.time()    
-    print(f"Time check: current={current_time}, last={last_resize_time}, diff={current_time - last_resize_time}")
     if current_time - last_resize_time < 0.1:
-        print("THROTTLED")
         return
     
-    print("SCALING")
     last_resize_time = current_time
         
 
@@ -118,7 +116,6 @@ def resizer(window):
     window.tk.call("tk", "scaling", true_scale)
     for widget in widgets:
         defaults = widget["default properties"]
-        print(defaults, true_scale)
         if widget["widget type"] in ["Button", "Label", "Entry", "Scale"]:
             #scaled_width = int(defaults["width"] * true_scale)
             #scaled_height = int(defaults["height"] * true_scale)
@@ -127,7 +124,6 @@ def resizer(window):
             widget["widget"].config(font=("default", scaled_font))
             #widget["widget"].place(width=scaled_width, height=scaled_height)
         if widget["widget type"] == "Radiobutton":
-            print(widget["widget"])
             scaled_font = int(defaults["font size"] * true_scale)
 
             
@@ -157,3 +153,8 @@ def add_placeholder(entry, placeholder_text):
 def get_real_value(entry, placeholder_text):
     value = entry.get()
     return "" if value == placeholder_text else value
+
+
+def page_cleaner(widget_list):
+    for widget in widget_list:
+        widget["widget"].place_forget()

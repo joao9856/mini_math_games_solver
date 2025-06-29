@@ -6,3 +6,4 @@ last_resize_time = 0.0 #to limit amount of resizing operations
 current_scale = 1.0 #keeping track of current true_scale applied to window
 event_calls = 0
 multiplier = 100
+radiobutton_options = {}
