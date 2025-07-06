@@ -69,7 +69,7 @@ def update_u_scale(value, window):
 
 
 
-def resizer(window):
+def resizer(window, force=False):
     global current_scale
     global last_resize_time
     global event_calls
@@ -109,24 +109,17 @@ def resizer(window):
 
     prescaled = scaling(current_width, current_height)
     true_scale = max(1.0,min(2.5, prescaled * u_scale))
-    if true_scale == 2.5 and current_scale == 2.5:
-        return
+    if not force and true_scale == 2.5 and current_scale == 2.5:
+            return
     current_scale = true_scale
     selected_img, unselected_img = get_scaled_radio_buttons(12 * true_scale)
     window.tk.call("tk", "scaling", true_scale)
     for widget in widgets:
         defaults = widget["default properties"]
-        if widget["widget type"] in ["Button", "Label", "Entry", "Scale"]:
-            #scaled_width = int(defaults["width"] * true_scale)
-            #scaled_height = int(defaults["height"] * true_scale)
-            scaled_font = int(defaults["font size"] * true_scale)
-
+        scaled_font = int(defaults["font size"] * true_scale)
+        if widget["widget type"] in ["Button", "Label", "Entry", "Scale", "Radio"]:
             widget["widget"].config(font=("default", scaled_font))
-            #widget["widget"].place(width=scaled_width, height=scaled_height)
         if widget["widget type"] == "Radiobutton":
-            scaled_font = int(defaults["font size"] * true_scale)
-
-            
 
             widget["widget"].config(font=("default", scaled_font), image=unselected_img, selectimage=selected_img)
 
