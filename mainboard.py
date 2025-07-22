@@ -15,16 +15,19 @@ class Board:
         self.rows = []
         self.columns = []
         self.side_board = []
-        self.groups = []
         self.validate_int = self.window.register(lambda x: self.enforce_int(x))
         self.mode = tk.StringVar(value="input")
         self.selected_group = None
+        self.selected_cell = None
         if self.board_type in self.bigger_boards:
             self.board_size += 1
 
         
 
         self.window.bind("<Configure>", lambda event: self.placer())
+        if self.board_type == "numsums":
+            self.window.bind("<FocusIn>", self.on_cell_selected)
+            self.window.bind("<FocusOut>", self.on_cell_deselected)
     
 
     def build(self):
@@ -143,7 +146,9 @@ class Board:
         self.place_groups()
 
 
-    def place_groups(self, recalc=False):
+    def place_groups(self, recalc=False, deselect=False):
+        if deselect:
+            self.selected_group = None
         if recalc:
             self.calc_size()
         
@@ -166,6 +171,45 @@ class Board:
         self.canvas_total_height += self.cell_width
         self.side_board[self.scrollable_canvas_index].scrollable_frame.configure(height=self.canvas_total_height, width=self.canvas_work_width)
         self.side_board[self.scrollable_canvas_index].canvas.configure(scrollregion=(0, 0, 0, self.canvas_total_height))
+    
+
+    def on_cell_selected(self, event=None):
+        selected_widget = event.widget
+        if isinstance(selected_widget, tk.Entry):
+            if self.mode.get() == "input":
+                if hasattr(selected_widget, "color") == False:
+                    selected_widget.config(state="normal")
+            if self.mode.get() == "groups":
+                if hasattr(selected_widget, "color"):
+                    self.selected_group = selected_widget
+                elif self.selected_group == None:
+                    pass
+                elif selected_widget.cget("bg") == "gray":
+                    pass
+                elif selected_widget.cget("bg") == self.selected_group.color:
+                    selected_widget.config(bg="white")
+                    self.selected_group.nums.pop(self.selected_group.nums.index(selected_widget))
+                elif selected_widget.cget("bg") == "white":
+                    selected_widget.config(bg=self.selected_group.color)
+                    self.selected_group.nums.append(selected_widget)
+                else:
+                    for entry, _ in self.side_board[self.scrollable_canvas_index].groups:
+                        if entry.color == selected_widget.cget("bg"):
+                            entry.nums.pop(entry.nums.index(selected_widget))
+                            selected_widget.config(bg=self.selected_group.color)
+                            self.selected_group.nums.append(selected_widget)
+                            break
+    
+    
+    def on_cell_deselected(self, event=None):
+        selected_widget = event.widget
+        if isinstance(selected_widget, tk.Entry):
+            if self.mode.get() == "input":
+                if hasattr(selected_widget, "color") == False:
+                    selected_widget.config(state="readonly")
+            if self.mode.get() == "groups":
+                if self.selected_group != None:
+                    pass
 
 
 
@@ -181,7 +225,7 @@ class BoardCell:
         self.window = window
         self.selected_group = selected_group
         if cell_type == "entry":
-            self.cell = tk.Entry(self.window, justify="center", bg=bgcolor, disabledbackground="", validate="key", validatecommand=validate_int, readonlybackground="", state=state, bd=1, font=("default", 20))
+            self.cell = tk.Entry(self.window, justify="center", bg=bgcolor, disabledbackground="", validate="key", validatecommand=(validate_int, "%P"), readonlybackground="", state=state, bd=1, font=("default", 20))
             add_to_widgets_list(self.cell, "Entry", default_font_size=20)
         if cell_type == "radio":
             self.cell = None
@@ -196,12 +240,7 @@ class BoardCell:
         if cell_type == "canvas":
             self.cell = tk.Canvas(window)
     
-    def on_click(self, event=None):
-        if self.cell.get() == "input":
-            self.cell.config(state="normal")
-        if self.cell.get() == "groups":
-            if self.selected_group != None:
-                pass
+    
 
 
 class ScrollableCanvas:
@@ -231,6 +270,7 @@ class ScrollableCanvas:
                 break
         entry = tk.Entry(self.scrollable_frame, bg=randcolor, justify="center", validate="key", validatecommand=(self.validate_int, "%P"), font=("default", 20))
         entry.nums = []
+        entry.color = randcolor
         add_to_widgets_list(entry, "Entry", default_font_size=20)
         button = tk.Button(self.scrollable_frame, bg="white", justify="center", text="Delete group", font=("default", 20))
         button.info = [len(self.groups), randcolor, len(widgets)]
@@ -240,6 +280,8 @@ class ScrollableCanvas:
 
 
     def delete_group(self, info):
+        for entry in self.groups[info[0]][0].nums:
+            entry.config(bg="white")
         self.groups[info[0]][0].destroy()
         self.groups[info[0]][1].destroy()
         self.colors.pop(self.colors.index(info[1]))
@@ -252,5 +294,5 @@ class ScrollableCanvas:
                 self.groups[i][1].info[2] -= 2
         
         if self.on_delete:
-            self.on_delete(True)
+            self.on_delete(True,True)
 

@@ -89,11 +89,11 @@ def resizer(window, force=False):
     new_height = current_height
 
 
-    if current_width < 800:
-        new_width = 800
+    if current_width < 1280:
+        new_width = 1280
         need_resizing = True
-    if current_height < 600:
-        new_height = 600
+    if current_height < 720:
+        new_height = 720
         need_resizing = True
 
     if need_resizing:

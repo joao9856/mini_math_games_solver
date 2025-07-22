@@ -5,7 +5,7 @@ from variable_creation import fill_var
 from PIL import Image, ImageTk
 
 window = tk.Tk()
-window.geometry("800x600")
+window.geometry("1280x720")
 
 icon_16 = ImageTk.PhotoImage(Image.open("img/icon/icon.png").resize((16, 16)))
 icon_32 = ImageTk.PhotoImage(Image.open("img/icon/icon.png").resize((32, 32)))
