@@ -1,9 +1,11 @@
 import tkinter as tk
-from general import add_to_widgets_list, get_scaled_radio_buttons, strike, update_u_scale, add_placeholder
+from general import add_to_widgets_list, get_scaled_radio_buttons, strike, update_u_scale, add_placeholder, enforce_int
 
 from widget_interaction import button_click_me
 
-def main_page_loader(window, validate_int):
+def main_page_loader(window):
+
+    validate_int = window.register(lambda x: enforce_int(x, "Rec 5-15"))
 
     button = tk.Button(window, text="Create Board", command=lambda : button_click_me(solver_choice.get(), window, board_size_input.get()), font=("default", 12), width=13)
     button.place(relx= 0.5, rely= 0.4)

@@ -1,9 +1,9 @@
 import tkinter as tk
 import random
 
-from general import add_to_widgets_list, resizer
+from general import add_to_widgets_list, resizer, page_cleaner
 from variables import widgets
-
+from main_page import main_page_loader
 
 class Board:
     def __init__(self, window, board_size, board_type):
@@ -15,6 +15,7 @@ class Board:
         self.rows = []
         self.columns = []
         self.side_board = []
+        self.solver_func = lambda : 0
         self.validate_int = self.window.register(lambda x: self.enforce_int(x))
         self.mode = tk.StringVar(value="input")
         self.selected_group = None
@@ -63,11 +64,12 @@ class Board:
                     self.columns[j].append(self.board[i][j])
 
     def placer(self):
-        self.calc_size()
-        self.cell_placer()
-        self.place_side_board()
-        self.place_groups()
-        resizer(self.window, True)
+        if self.board != []:
+            self.calc_size()
+            self.cell_placer()
+            self.place_side_board()
+            self.place_groups()
+            resizer(self.window, True)
         
 
     def cell_placer(self):
@@ -87,7 +89,7 @@ class Board:
     
 
     def calc_size(self):
-        self.board_width = int(self.window.winfo_width() * 0.8) - 10 if int(self.window.winfo_width() * 0.8) - 10 <= self.window.winfo_height() else self.window.winfo_height() - 10
+        self.board_width = int(self.window.winfo_width() * 0.6) - 10 if int(self.window.winfo_width() * 0.6) - 10 <= self.window.winfo_height() else self.window.winfo_height() - 10
         self.cell_width = int(self.board_width / (self.board_size))
         self.cell_start_x = int((self.board_width - (self.cell_width * (self.board_size))) / 2)
         self.cell_curr_x = self.cell_start_x
@@ -130,6 +132,8 @@ class Board:
         self.side_board.append(BoardCell(self.window, "white", cell_type="button", text="Return"))
         self.side_board.append(BoardCell(self.window, "white", cell_type="button", text="Solve"))
         self.side_board.append(ScrollableCanvas(self.window, on_delete=self.place_groups, validate_int=self.validate_int))
+        self.side_board[self.return_index].cell.config(command=(self.return_button))
+        self.side_board[self.solve_index].cell.config(command=(self.solver))
 
     def place_numsums_side_board(self):
         for radio in self.side_board[self.radio_index].radio:
@@ -211,8 +215,19 @@ class Board:
                 if self.selected_group != None:
                     pass
 
+    
+    def return_button(self):
+        self.board.clear()
+        self.rows.clear() 
+        self.columns.clear()
+        self.side_board.clear()
+        del self.scrollable_canvas_index
+        page_cleaner(widgets)
+        main_page_loader(self.window)
 
 
+    def solver(self):
+        self.solver_func(self)
     
 
     def enforce_int(self, value):

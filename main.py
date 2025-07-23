@@ -1,5 +1,5 @@
 import tkinter as tk
-from general import load_images, enforce_int, resizer
+from general import load_images, resizer
 from main_page import main_page_loader
 from variable_creation import fill_var
 from PIL import Image, ImageTk
@@ -17,8 +17,7 @@ window.title("Solver selection")
 window.winfo_width()
 load_images()
 fill_var()
-validate_int = window.register(lambda x: enforce_int(x, "Rec 5-15"))
-main_page_loader(window, validate_int)
+main_page_loader(window)
 
 
 window.bind("<Configure>", lambda event: resizer(window))

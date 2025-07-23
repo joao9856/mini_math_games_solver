@@ -150,4 +150,5 @@ def get_real_value(entry, placeholder_text):
 
 def page_cleaner(widget_list):
     for widget in widget_list:
-        widget["widget"].place_forget()
+        widget["widget"].destroy()
+    widget_list.clear()
