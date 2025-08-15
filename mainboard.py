@@ -52,10 +52,12 @@ class Board:
                     elif i == 0 and j != 0:
                         self.board[i].append(BoardCell(self.window, bgcolor="gray", validate_int=self.validate_int, selected_group=self.selected_group))
                         self.board[i][j].cell.sum_so_far = 0
+                        self.board[i][j].cell.not_solved = True
                         self.columns[j].append(self.board[i][j])
                     elif j == 0 and i != 0:
                         self.board[i].append(BoardCell(self.window, bgcolor="gray", validate_int=self.validate_int, selected_group=self.selected_group))
                         self.board[i][j].cell.sum_so_far = 0
+                        self.board[i][j].cell.not_solved = True
                         self.rows[i].append(self.board[i][j])
                     else:
                         self.board[i].append(BoardCell(self.window, validate_int=self.validate_int, selected_group=self.selected_group))
@@ -294,6 +296,7 @@ class ScrollableCanvas:
         entry.nums = []
         entry.color = randcolor
         entry.sum_so_far = 0
+        entry.not_solved = True
         add_to_widgets_list(entry, "Entry", default_font_size=20)
         button = tk.Button(self.scrollable_frame, bg="white", justify="center", text="Delete group", font=("default", 20))
         button.info = [len(self.groups), randcolor, len(widgets)]

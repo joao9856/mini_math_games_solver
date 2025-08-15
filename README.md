@@ -1,5 +1,6 @@
 # mini_math_games_solver
-A solver for mini math games such as nonogram and similar
+A solver for mini math games such as number sums, nonogram and similar
+For the <boot.dev> first personal project i will only complete the number sums part, the rest will be **very** slowly implemented. 
 
 
 ## Intructions
