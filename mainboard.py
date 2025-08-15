@@ -20,6 +20,7 @@ class Board:
         self.mode = tk.StringVar(value="input")
         self.selected_group = None
         self.selected_cell = None
+        self.solver_action_made = False
         if self.board_type in self.bigger_boards:
             self.board_size += 1
 
@@ -50,16 +51,22 @@ class Board:
                         self.board[i].append(BoardCell(self.window, bgcolor="black", state="disabled"))
                     elif i == 0 and j != 0:
                         self.board[i].append(BoardCell(self.window, bgcolor="gray", validate_int=self.validate_int, selected_group=self.selected_group))
+                        self.board[i][j].cell.sum_so_far = 0
                         self.columns[j].append(self.board[i][j])
                     elif j == 0 and i != 0:
                         self.board[i].append(BoardCell(self.window, bgcolor="gray", validate_int=self.validate_int, selected_group=self.selected_group))
+                        self.board[i][j].cell.sum_so_far = 0
                         self.rows[i].append(self.board[i][j])
                     else:
                         self.board[i].append(BoardCell(self.window, validate_int=self.validate_int, selected_group=self.selected_group))
+                        self.board[i][j].cell.row_index = i
+                        self.board[i][j].cell.column_index = j
+                        self.board[i][j].cell.num_to_keep = False
                         self.rows[i].append(self.board[i][j])
                         self.columns[j].append(self.board[i][j])
+                        
                 else:
-                    self.board[i].append(BoardCell(self.window, bgcolor="gray", validate_int=self.validate_int, selected_group=self.selected_group))
+                    self.board[i].append(BoardCell(self.window, validate_int=self.validate_int, selected_group=self.selected_group))
                     self.rows[i].append(self.board[i][j])
                     self.columns[j].append(self.board[i][j])
 
@@ -286,6 +293,7 @@ class ScrollableCanvas:
         entry = tk.Entry(self.scrollable_frame, bg=randcolor, justify="center", validate="key", validatecommand=(self.validate_int, "%P"), font=("default", 20))
         entry.nums = []
         entry.color = randcolor
+        entry.sum_so_far = 0
         add_to_widgets_list(entry, "Entry", default_font_size=20)
         button = tk.Button(self.scrollable_frame, bg="white", justify="center", text="Delete group", font=("default", 20))
         button.info = [len(self.groups), randcolor, len(widgets)]
